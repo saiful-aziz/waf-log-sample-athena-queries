@@ -12,7 +12,7 @@ SUM(CASE WHEN challengeresponse.failurereason = 'TOKEN_EXPIRED' THEN 1 ELSE 0 EN
 SUM(CASE WHEN captcharesponse.failurereason = 'TOKEN_EXPIRED' THEN 1 ELSE 0 END ) CAPTCHA_TOKEN_EXPIRED,
 SUM(CASE WHEN challengeresponse.failurereason = 'TOKEN_MISSING' THEN 1 ELSE 0 END ) CHALLENGE_TOKEN_MISSING,
 SUM(CASE WHEN captcharesponse.failurereason = 'TOKEN_MISSING' THEN 1 ELSE 0 END ) CAPTCHA_TOKEN_MISSING
-FROM  waf_logs
- WHERE date >= date_format(current_date - interval '7' day, '%Y/%m/%d')
+FROM  waf_logs_partition_projection
+ WHERE log_time >= date_format(current_date - interval '3' day, '%Y/%m/%d')
 GROUP BY httprequest.clientip
 ORDER BY Total_Requests DESC

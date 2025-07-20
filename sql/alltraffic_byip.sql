@@ -4,14 +4,14 @@
 -- The results are limited to the last 7 days.
 
 SELECT count(*) AS countRequests,terminatingruleid, httprequest.uri, httprequest.args, label_item.name
-FROM "waf_logs" ,
+FROM waf_logs_partition_projection ,
 UNNEST( CASE WHEN cardinality(labels) >= 1
                THEN labels
                ELSE array[ cast( row('NOLABEL') as row(name varchar)) ]
               END
        ) AS t(label_item)
 WHERE 
- date >=date_format(current_date - interval '7' day, '%Y/%m/%d')  
+ log_time >=date_format(current_date - interval '7' day, '%Y/%m/%d')  
  AND httprequest.clientip LIKE 'XXX.YYY%'
 GROUP BY terminatingruleid, httprequest.uri, httprequest.args, label_item.name
 ORDER BY count(*) DESC

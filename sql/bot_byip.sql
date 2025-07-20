@@ -85,7 +85,7 @@
         COUNT(DISTINCT httprequest.uri) AS unique_uri,
         COUNT(DISTINCT try( filter( httprequest.headers, x -> LOWER(x.name) = 'host' )[1].value )) AS unique_header_host
 
-    FROM  waf_logs cross join 
+    FROM  waf_logs_partition_projection cross join 
 
     UNNEST( CASE WHEN cardinality(labels) >= 1
                THEN labels
@@ -93,6 +93,6 @@
               END
        ) AS t(label_items)
     WHERE
-date >= date_format(current_date - interval '7' day, '%Y/%m/%d')  
+log_time >= date_format(current_date - interval '7' day, '%Y/%m/%d')  
     GROUP BY httprequest.clientip
     ORDER BY httprequest.clientip
